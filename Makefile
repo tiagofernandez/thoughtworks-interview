@@ -1,8 +1,11 @@
 default: develop
 
 setup:
-	pip install --upgrade virtualenv autoenv nose
+	pip install --upgrade virtualenv autoenv
 	virtualenv -p python3 env
+
+deps:
+	pip install -r requirements.txt --quiet
 
 clean:
 	find . -type f -name '*.pyc' -delete
@@ -10,7 +13,7 @@ clean:
 test: clean develop
 	nosetests -s
 
-develop:
+develop: deps
 	python setup.py develop
 
 install:
