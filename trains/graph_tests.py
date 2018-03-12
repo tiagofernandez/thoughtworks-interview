@@ -17,8 +17,22 @@ class TestGraph(unittest.TestCase):
         self.assertDistance(5, 'NO SUCH ROUTE', ['A', 'E', 'D'])
 
 
+    def test_number_of_trips(self):
+        self.assertTotalTrips(6, 2, 'C', 'C', max_stops=3)
+        self.assertTotalTrips(7, 3, 'A', 'C', exact_stops=4)
+
+
+    def test_number_of_different_routes(self):
+        self.assertTotalTrips(10, 7, 'C', 'C', max_distance=30)
+
+
     def assertDistance(self, out_number, expected, path):
         result = graph.calc_distance(path)
+        self.assertResultEqual(expected, result, out_number)
+
+
+    def assertTotalTrips(self, out_number, expected, origin, destination, **kwargs):
+        result = graph.calc_trips(origin, destination, **kwargs)
         self.assertResultEqual(expected, result, out_number)
 
 
