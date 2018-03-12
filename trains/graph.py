@@ -1,3 +1,5 @@
+import sys
+
 from queue import Queue
 
 
@@ -121,3 +123,19 @@ class Graph():
             else:
                 total += 1 # no constraints to apply
         return total
+
+
+    def calc_shortest(self, origin, destination):
+        """
+        Calculates the shortest route from an origin to a destination.
+
+        :param origin: The start node
+        :param destination: The end node
+        :return: The distance of the shortest route
+        """
+        shortest = sys.maxsize
+        for path in self._find_paths(origin, destination):
+            distance = self.calc_distance(path)
+            if distance < shortest:
+                shortest = distance
+        return shortest
