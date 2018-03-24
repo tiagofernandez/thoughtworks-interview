@@ -23,4 +23,4 @@ tar:
 	python setup.py sdist
 
 run:
-	./trains/app.py $(input)
+	python trains/app.py $(input)

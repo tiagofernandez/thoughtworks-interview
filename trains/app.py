@@ -2,11 +2,11 @@
 
 import ast, logging, os, sys
 
-from trains.graph import Graph
+from trains.models import TrainNetwork
 from trains.utils import read_input_data
 
 
-instructions = '''
+instructions = '''\
  _____             _             
 |_   _|_ __  __ _ (_) _ __   ___
   | | | '__|/ _` || || '_ \ / __|
@@ -14,17 +14,18 @@ instructions = '''
   |_| |_|   \__,_||_||_| |_||___/
 
 Available commands:
-* distance
-* nr_trips
-* shortest
-* quit
+* distance (d)
+* trips (t)
+* shortest (s)
+* quit (q)
 
-Usage examples:
+Usage examples - named arguments are optional:
 * distance A B C
-* nr_trips A C exact_stops=<int> max_stops=<int> max_distance=<int>
+* trips A C exact_stops=<int> max_stops=<int> max_distance=<int>
 * shortest B B
 
-Note: named arguments are optional.
+Graph:
+%s
 '''
 
 logging.basicConfig(level=logging.INFO)
@@ -47,7 +48,7 @@ def parse_command(raw):
             if '=' in token:
                 name, value = [x.strip() for x in token.split('=')]
                 kwargs[name] = ast.literal_eval(value)
-            else:
+            elif token:
                 args.append(token)
         return (args[0].lower(), args[1:], kwargs)
 
@@ -61,11 +62,12 @@ def execute(command, graph):
     :return: The command's result
     """
     target, result = (command[0], None)
-    func = getattr(graph, target, None)
-    if target == 'distance':
-        result = func(command[1])
-    elif target in ['nr_trips', 'shortest']:
-        result = func(*command[1], **command[2])
+    if target in ['distance', 'd']:
+        result = getattr(graph, 'total_distance')(command[1])
+    elif target in ['trips', 't']:
+        result = getattr(graph, 'total_trips')(*command[1], **command[2])
+    elif target in ['shortest', 's']:
+        result = getattr(graph, 'shortest_route')(*command[1], **command[2])
     return result
 
 
@@ -74,17 +76,16 @@ if __name__ == '__main__':
         raise ValueError('Error: provide the path to the input data (e.g. make input=data/test.txt run)')
     else:
         data = read_input_data(sys.argv[1])
-        graph, command = (Graph(data), 'init')
+        train_network, command = (TrainNetwork(data), 'init')
 
         os.system('clear')
-        print(instructions)
-        print('Graph: %s\n' % graph)
+        print(instructions % train_network)
 
-        while command[0] != 'quit':
+        while command[0] not in ['quit', 'q']:
             command = parse_command(input('$ '))
             try:
-                result = execute(command, graph)
+                result = execute(command, train_network)
                 if result:
-                    print('%s\n' % result)
-            except:
-                print('Error\n')
+                    print('%s\n' % str(result))
+            except Exception as ex:
+                print('Error %s\n' % ex)
