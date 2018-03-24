@@ -1,13 +1,13 @@
 import unittest
 
+from trains.app import read_input_data
 from trains.graph import Graph
 
 
-graph = Graph(['AB5', 'BC4', 'CD8', 'DC8', 'DE6', 'AD5', 'CE2', 'EB3', 'AE7'])
+graph = Graph(read_input_data('data/test.txt'))
 
 
 class TestGraph(unittest.TestCase):
-
 
     def test_distance_of_routes(self):
         self.assertDistance(1, 9, ['A', 'B', 'C'])
@@ -32,24 +32,20 @@ class TestGraph(unittest.TestCase):
 
 
     def assertDistance(self, out_number, expected, path):
-        result = graph.calc_distance(path)
+        result = graph.distance(path)
         self.assertResultEqual(expected, result, out_number)
 
 
     def assertTotalTrips(self, out_number, expected, origin, destination, **kwargs):
-        result = graph.calc_trips(origin, destination, **kwargs)
+        result = graph.nr_trips(origin, destination, **kwargs)
         self.assertResultEqual(expected, result, out_number)
 
 
     def assertShortest(self, out_number, expected, origin, destination):
-        result = graph.calc_shortest(origin, destination)
+        result = graph.shortest(origin, destination)
         self.assertResultEqual(expected, result, out_number)
 
 
     def assertResultEqual(self, expected, result, out_number):
         print('Output #%d: %s' % (out_number, result))
         self.assertEqual(expected, result)
-
-
-if __name__ == '__main__':
-    unittest.main()

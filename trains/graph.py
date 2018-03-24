@@ -1,6 +1,9 @@
-import sys
+import logging, sys
 
 from queue import Queue
+
+
+logger = logging.getLogger(__name__)
 
 
 class Graph():
@@ -24,6 +27,8 @@ class Graph():
 
             # Connect origin to destination with its distance
             self._graph[origin][destination] = distance
+
+        logger.info('Graph initialized: %s' % edges)
 
 
     def _generate_paths(self, queue, origin, destination, path=None):
@@ -75,7 +80,7 @@ class Graph():
         return [p for p in [next(paths) for _ in range(self._max_depth)] if len(p) > 1]
 
 
-    def calc_distance(self, path):
+    def distance(self, path):
         """
         Calculates the distance for an exact path.
 
@@ -101,7 +106,7 @@ class Graph():
         return total
 
 
-    def calc_trips(self, origin, destination, exact_stops=None, max_stops=None, max_distance=None):
+    def nr_trips(self, origin, destination, exact_stops=None, max_stops=None, max_distance=None):
         """
         Calculates the number of trips from an origin to a destination.
 
@@ -118,14 +123,14 @@ class Graph():
                 stops = len(path) - 1
                 if (exact_stops and stops == exact_stops) or (max_stops and stops <= max_stops):
                     total += 1 # one of the stop constraints matched
-                elif max_distance and self.calc_distance(path) < max_distance:
+                elif max_distance and self.distance(path) < max_distance:
                     total += 1 # the distance is within its constraint
             else:
                 total += 1 # no constraints to apply
         return total
 
 
-    def calc_shortest(self, origin, destination):
+    def shortest(self, origin, destination):
         """
         Calculates the shortest route from an origin to a destination.
 
@@ -135,7 +140,15 @@ class Graph():
         """
         shortest = sys.maxsize
         for path in self._find_paths(origin, destination):
-            distance = self.calc_distance(path)
+            distance = self.distance(path)
             if distance < shortest:
                 shortest = distance
         return shortest
+
+
+    def __repr__(self):
+        return self.__str__()
+
+
+    def __str__(self):
+        return str(self._graph)

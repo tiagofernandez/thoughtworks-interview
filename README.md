@@ -67,7 +67,12 @@ make setup
 . env/bin/activate
 ```
 
-## Run tests and verify output
+## Execute the unit tests
 ```bash
 make test
+```
+
+## Run the application 
+```bash
+make input=data/test.txt run
 ```

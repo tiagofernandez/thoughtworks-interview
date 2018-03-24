@@ -10,7 +10,7 @@ deps:
 clean:
 	find . -type f -name '*.pyc' -delete
 
-test: clean develop
+test: clean
 	nosetests -s
 
 develop: deps
@@ -21,3 +21,6 @@ install:
 
 tar:
 	python setup.py sdist
+
+run:
+	./trains/app.py $(input)
